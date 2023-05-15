@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">AndroidImageChooser</string>
+    <string name="ok_string">OK</string>
+    <string name="permission_denied">Permission denied!</string>
+    <string name="denied_permissions_can_be_allowed_from_settings">Denied permissions can be allowed from settings</string>
+    <string name="allow_permission">Allow permission</string>
+    <string name="choose_image_from">Choose image from</string>
+    <string name="open_camera">Open Camera</string>
+    <string name="open_gallery">Open Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="image_gallery">Image Gallery</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_image">Select Image</string>
+    <string name="go_to_settings">Go to settings</string>
+    <string name="allow_permissions_to_continue">Allow permissions to continue </string>
+</resources>
