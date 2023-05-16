@@ -2,12 +2,17 @@ package mollah.yamin.androidimagechooser.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.graphics.Matrix
+import android.graphics.Paint
 import androidx.exifinterface.media.ExifInterface
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+
 
 object BitmapUtils {
 
@@ -48,7 +53,7 @@ object BitmapUtils {
     /**
      * Rotates a bitmap if it is converted from a bytebuffer.
      */
-    private fun rotateBitmap(
+    fun rotateBitmap(
         bitmap: Bitmap, rotationDegrees: Int, flipX: Boolean, flipY: Boolean
     ): Bitmap {
         val matrix = Matrix()
@@ -106,4 +111,37 @@ object BitmapUtils {
 
     fun getBitmapFromFilePath(path: String): Bitmap? =
         BitmapFactory.decodeStream(FileInputStream(path), null, BitmapFactory.Options())
+
+    /**
+     *
+     * @param bmp input bitmap
+     * @param contrast 0..10 1 is default
+     * @param brightness -255..255 0 is default
+     * @return new Bitmap
+     */
+    fun changeBitmapContrastBrightness(bmp: Bitmap, contrast: Float, brightness: Float): Bitmap? {
+        val outBitmap = Bitmap.createBitmap(bmp.width, bmp.height, bmp.config)
+        val canvas = Canvas(outBitmap)
+        val paint = Paint()
+        paint.colorFilter = getContrastBrightnessFilter(contrast, brightness)
+        canvas.drawBitmap(bmp, 0f, 0f, paint)
+        return outBitmap
+    }
+
+    /**
+     * @param contrast 0..10 1 is default
+     * @param brightness -255..255 0 is default
+     * @return ColorMatrixColorFilter
+     */
+    fun getContrastBrightnessFilter(contrast: Float, brightness: Float): ColorMatrixColorFilter {
+        val cm = ColorMatrix(
+            floatArrayOf(
+                contrast, 0f, 0f, 0f, brightness,
+                0f, contrast, 0f, 0f, brightness,
+                0f, 0f, contrast, 0f, brightness,
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
+        return ColorMatrixColorFilter(cm)
+    }
 }

@@ -20,11 +20,90 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <LinearLayout
+            android:id="@+id/linearRotation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_16"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/dp_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/loader">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRotateLeft"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_16"
+                android:text="@string/rotate_left"
+                android:textAllCaps="false"
+                android:textColor="@color/colorTextNormal"
+                app:icon="@drawable/baseline_rotate_left_24"
+                app:rippleColor="@color/colorTextLight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRotateRight"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/rotate_right"
+                android:textAllCaps="false"
+                android:textColor="@color/colorTextNormal"
+                app:icon="@drawable/baseline_rotate_right_24"
+                app:iconGravity="textEnd"
+                app:rippleColor="@color/colorTextLight" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearFlip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_16"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/dp_16"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearRotation">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFlipHorizontal"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_16"
+                android:text="@string/flip_horizontally"
+                android:textAllCaps="false"
+                android:textColor="@color/colorTextNormal"
+                app:icon="@drawable/baseline_border_horizontal_24"
+                app:rippleColor="@color/colorTextLight" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFlipVertical"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/flip_vertically"
+                android:textAllCaps="false"
+                android:textColor="@color/colorTextNormal"
+                app:icon="@drawable/baseline_border_vertical_24"
+                app:iconGravity="textEnd"
+                app:rippleColor="@color/colorTextLight" />
+        </LinearLayout>
+
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="@dimen/dp_40"
+            android:layout_marginVertical="@dimen/dp_40"
+            android:layout_marginHorizontal="@dimen/dp_70"
             app:cardCornerRadius="@dimen/dp_10"
             app:cardElevation="@dimen/dp_5"
             app:cardUseCompatPadding="false"
@@ -32,14 +111,15 @@
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.15">
+            app:layout_constraintTop_toBottomOf="@+id/linearFlip"
+            app:layout_constraintVertical_bias="0.0">
 
             <ImageView
                 android:id="@+id/preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/app_name" />
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop" />
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -60,6 +140,56 @@
             app:layout_constraintStart_toStartOf="@+id/materialCardView"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView"
             app:rippleColor="@android:color/white" />
+
+        <LinearLayout
+            android:id="@+id/linearEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/dp_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnSelectImage">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="@dimen/dp_100"
+                    android:layout_height="match_parent"
+                    android:text="Brightness:"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextNormal"/>
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderBright"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:labelBehavior="floating"
+                    android:value="0"
+                    android:valueFrom="-255"
+                    android:valueTo="255"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="@dimen/dp_100"
+                    android:layout_height="match_parent"
+                    android:text="Contrast:"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextNormal"/>
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderContrast"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:labelBehavior="floating"
+                    android:value="10"
+                    android:valueFrom="0"
+                    android:valueTo="100"/>
+            </LinearLayout>
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

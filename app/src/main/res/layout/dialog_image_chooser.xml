@@ -27,15 +27,13 @@
                 android:gravity="center"
                 android:textSize="@dimen/sp_18"
                 android:textColor="@color/colorTextNormal"
-                android:layout_marginTop="@dimen/dp_16"
-                android:textStyle="bold"
                 android:text="@string/choose_image_from"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/colorLightGray"
-                android:layout_marginTop="@dimen/dp_4"/>
+                android:layout_marginTop="@dimen/dp_16"/>
 
             <TextView
                 android:id="@+id/openCamera"
@@ -72,7 +70,7 @@
                 style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_56"
-                android:layout_marginTop="@dimen/dp_32"
+                android:layout_marginTop="@dimen/dp_16"
                 android:layout_marginBottom="@dimen/dp_8"
                 android:text="@string/cancel"
                 android:textColor="@android:color/white"

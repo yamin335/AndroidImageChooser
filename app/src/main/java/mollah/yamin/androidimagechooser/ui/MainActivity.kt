@@ -1,21 +1,21 @@
 package mollah.yamin.androidimagechooser.ui
 
+import android.animation.AnimatorSet
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import com.google.android.material.slider.Slider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,7 +36,21 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var permissionUtils: PermissionUtils
 
+    private var contrast = 1f
+    private var brightness = 0f
+
     var latestCameraPhotoPath: String = ""
+    private var savedBitmap: Bitmap? = null
+        set(value) {
+            field = value
+
+            runOnUiThread {
+                binding.sliderBright.isEnabled = value != null
+                binding.sliderContrast.isEnabled = value != null
+            }
+        }
+
+    private var tempBitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +92,119 @@ class MainActivity : AppCompatActivity() {
                 }
             )
         }
+
+        binding.btnRotateLeft.setOnClickListener {
+            savedBitmap?.let {
+                binding.loader.visibility = View.VISIBLE
+                CoroutineScope(Dispatchers.IO).launch {
+                    savedBitmap = BitmapUtils.rotateBitmap(it, -90, flipX = false, flipY = false)
+                    applyContrastAndBrightnessToTemp()
+                    runOnUiThread {
+                        binding.preview.setImageBitmap(tempBitmap)
+                        binding.loader.visibility = View.INVISIBLE
+                    }
+                }
+            }
+        }
+
+        binding.btnRotateRight.setOnClickListener {
+            savedBitmap?.let {
+                binding.loader.visibility = View.VISIBLE
+                CoroutineScope(Dispatchers.IO).launch {
+                    savedBitmap = BitmapUtils.rotateBitmap(it, 90, flipX = false, flipY = false)
+                    applyContrastAndBrightnessToTemp()
+                    runOnUiThread {
+                        binding.preview.setImageBitmap(tempBitmap)
+                        binding.loader.visibility = View.INVISIBLE
+                    }
+                }
+            }
+        }
+
+        binding.btnFlipHorizontal.setOnClickListener {
+            savedBitmap?.let {
+                binding.loader.visibility = View.VISIBLE
+                CoroutineScope(Dispatchers.IO).launch {
+                    savedBitmap = BitmapUtils.rotateBitmap(it, 0, flipX = true, flipY = false)
+                    applyContrastAndBrightnessToTemp()
+                    runOnUiThread {
+                        binding.preview.setImageBitmap(tempBitmap)
+                        binding.loader.visibility = View.INVISIBLE
+                    }
+                }
+            }
+        }
+
+        binding.btnFlipVertical.setOnClickListener {
+            savedBitmap?.let {
+                binding.loader.visibility = View.VISIBLE
+                CoroutineScope(Dispatchers.IO).launch {
+                    savedBitmap = BitmapUtils.rotateBitmap(it, 0, flipX = false, flipY = true)
+                    applyContrastAndBrightnessToTemp()
+                    runOnUiThread {
+                        binding.preview.setImageBitmap(tempBitmap)
+                        binding.loader.visibility = View.INVISIBLE
+                    }
+                }
+            }
+        }
+
+        binding.sliderBright.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                // Responds to when slider's touch event is being started
+            }
+
+            override fun onStopTrackingTouch(slider: Slider) {
+                // Responds to when slider's touch event is being stopped
+                applyContrastAndBrightness()
+            }
+        })
+
+        binding.sliderBright.addOnChangeListener { slider, value, fromUser ->
+            // Responds to when slider's value is changed
+            brightness = value
+        }
+
+        binding.sliderContrast.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            override fun onStartTrackingTouch(slider: Slider) {
+                // Responds to when slider's touch event is being started
+            }
+
+            override fun onStopTrackingTouch(slider: Slider) {
+                // Responds to when slider's touch event is being stopped
+                applyContrastAndBrightness()
+            }
+        })
+
+        binding.sliderContrast.addOnChangeListener { slider, value, fromUser ->
+            // Responds to when slider's value is changed
+            contrast = value / 10
+        }
+
+        savedBitmap = null
+    }
+
+    private fun applyContrastAndBrightnessToTemp() {
+        savedBitmap?.let { bitmap ->
+            tempBitmap = BitmapUtils.changeBitmapContrastBrightness(
+                bmp = bitmap, contrast = contrast, brightness = brightness
+            )
+        }
+    }
+
+    private fun applyContrastAndBrightness() {
+        savedBitmap?.let { bitmap ->
+            binding.loader.visibility = View.VISIBLE
+            CoroutineScope(Dispatchers.IO).launch {
+                tempBitmap = BitmapUtils.changeBitmapContrastBrightness(
+                    bmp = bitmap, contrast = contrast, brightness = brightness
+                )
+                runOnUiThread {
+                    binding.preview.setImageBitmap(tempBitmap)
+                    binding.loader.visibility = View.INVISIBLE
+                }
+            }
+        }
     }
 
     private fun showImageChooserDialog() {
@@ -114,9 +241,9 @@ class MainActivity : AppCompatActivity() {
                     ).absolutePath
                 }
 
-                bitmap = BitmapUtils.getBitmapFromFilePath(photoPath) ?: return@launch
+                savedBitmap = BitmapUtils.getBitmapFromFilePath(photoPath) ?: return@launch
                 runOnUiThread {
-                    binding.preview.setImageBitmap(bitmap)
+                    binding.preview.setImageBitmap(savedBitmap)
                     binding.loader.visibility = View.INVISIBLE
                     Toast.makeText(this@MainActivity,
                         "Size: ${FileUtils.formatFileSizeInText(File(photoPath).length().toDouble())}",
@@ -150,9 +277,9 @@ class MainActivity : AppCompatActivity() {
                     ).absolutePath
                 }
 
-                bitmap = BitmapUtils.getBitmapFromFilePath(photoPath) ?: return@launch
+                savedBitmap = BitmapUtils.getBitmapFromFilePath(photoPath) ?: return@launch
                 runOnUiThread {
-                    binding.preview.setImageBitmap(bitmap)
+                    binding.preview.setImageBitmap(savedBitmap)
                     binding.loader.visibility = View.INVISIBLE
                     Toast.makeText(this@MainActivity,
                         "Size: ${FileUtils.formatFileSizeInText(File(photoPath).length().toDouble())}",

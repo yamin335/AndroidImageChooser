@@ -13,4 +13,8 @@
     <string name="select_image">Select Image</string>
     <string name="go_to_settings">Go to settings</string>
     <string name="allow_permissions_to_continue">Allow permissions to continue </string>
+    <string name="rotate_left">Rotate Left</string>
+    <string name="rotate_right">Rotate Right</string>
+    <string name="flip_horizontally">Flip Horizontal</string>
+    <string name="flip_vertically">Flip Vertical</string>
 </resources>
