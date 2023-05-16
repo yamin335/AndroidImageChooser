@@ -17,4 +17,6 @@
     <string name="rotate_right">Rotate Right</string>
     <string name="flip_horizontally">Flip Horizontal</string>
     <string name="flip_vertically">Flip Vertical</string>
+    <string name="contrast">Contrast:</string>
+    <string name="brightness">Brightness:</string>
 </resources>

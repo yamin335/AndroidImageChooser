@@ -16,4 +16,6 @@
     <color name="colorGray">#808080</color>
     <color name="colorLightGray">#F0F0F0</color>
     <color name="colorTextPlaceHolder">#BBBBBB</color>
+
+    <color name="colorDialogBg">#BF000000</color>
 </resources>
