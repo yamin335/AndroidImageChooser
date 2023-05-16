@@ -2,5 +2,5 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-path
         name="external_pictures"
-        path="Android/data/${applicationId}/files/Pictures" />
+        path="Android/data/mollah.yamin.androidimagechooser/files/Pictures" />
 </paths>

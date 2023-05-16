@@ -2,10 +2,18 @@ package mollah.yamin.androidimagechooser.utils
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Environment
+import android.provider.MediaStore
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import mollah.yamin.androidimagechooser.R
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object FileUtils {
     // Checks if a volume containing external storage is available
@@ -27,6 +35,23 @@ object FileUtils {
                 return false
         }
         return true
+    }
+
+    @Throws(IOException::class)
+    fun createImageFileInImageDir(activity: AppCompatActivity): File {
+        // Create a unique image file name
+        val timeStamp = SimpleDateFormat(
+            "yyyyMMdd_HHmmss", Locale.getDefault()
+        ).format(Date())
+
+        val imageFileName = "JPEG_" + timeStamp + "_"
+
+        val storageDir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            imageFileName,  /* prefix */
+            ".jpg",  /* suffix */
+            storageDir /* directory */
+        )
     }
 
     fun makeEmptyFileIntoExternalStorageWithTitle(applicationContext: Context, folderName: String, fileName: String): File {
@@ -82,5 +107,53 @@ object FileUtils {
                 return false
         }
         return true
+    }
+
+    fun getFilePathFromMediaContentUri(uri: Uri, context: Context): String? {
+        val mediaStorePath = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = context.contentResolver.query(
+            uri, mediaStorePath,
+            null, null, null
+        ) ?: return null
+        cursor.moveToFirst()
+        val columnIndex = cursor.getColumnIndex(mediaStorePath[0])
+        val imagePath = cursor.getString(columnIndex)
+        cursor.close()
+        return imagePath
+    }
+
+    fun deleteFolderFromExternalStorage(file: File): Boolean {
+        if (file.exists()) {
+            if (!file.deleteRecursively())
+                return false
+        }
+        return true
+    }
+
+    fun formatFileSizeInText(size: Double): String {
+        if (size < 1024) {
+            return "${size.toRounded(1)} B"
+        }
+        return fileSizeInKB(size)
+    }
+
+    private fun fileSizeInKB(size: Double): String {
+        val value = size / 1024
+        if (value < 1024) {
+            return "${value.toRounded(1)} KB"
+        }
+        return fileSizeInMB(value)
+    }
+
+    private fun fileSizeInMB(size: Double): String {
+        val value = size / 1024
+        if (value < 1024) {
+            return "${value.toRounded(1)} MB"
+        }
+        return fileSizeInGB(size)
+    }
+
+    private fun fileSizeInGB(size: Double): String {
+        return "${(size/1024).toRounded(1)} GB"
     }
 }
